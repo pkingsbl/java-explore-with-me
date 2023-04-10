@@ -17,10 +17,26 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<modules>
+		<module>main-service</module>
+		<module>stats-service</module>
+	</modules>
+
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<pluginManagement>
@@ -183,5 +199,35 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!--main-service-->
+			<dependency>
+				<groupId>main-service</groupId>
+				<artifactId>ru.practicum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!--stats-service-->
+			<dependency>
+				<groupId>stats-client</groupId>
+				<artifactId>ru.practicum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>stats-dto</groupId>
+				<artifactId>ru.practicum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>stats-server</groupId>
+				<artifactId>ru.practicum</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 </project>
