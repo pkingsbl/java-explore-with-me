@@ -24,8 +24,8 @@ public class StatsClientServiceImpl implements StatsClientService {
     @Override
     public ResponseEntity<Object> postHit(HitDto hitDto) {
         log.info("POST Client Statistic hit for app: {}", hitDto.getApp());
-        HttpEntity<HitDto> requestEntity = new HttpEntity<>(hitDto);
-        return rest.exchange(serverUrl + "/hit", HttpMethod.POST, requestEntity, Object.class);
+
+        return rest.exchange(serverUrl + "/hit", HttpMethod.POST, new HttpEntity<>(hitDto), Object.class);
     }
 
     @Override
@@ -44,9 +44,8 @@ public class StatsClientServiceImpl implements StatsClientService {
             parameters.put("unique", unique);
         }
 
-        HttpEntity<String> requestEntity = new HttpEntity<>("");
-        ResponseEntity<StatsDto[]> response =
-                rest.exchange(serverUrl + "/stats", HttpMethod.GET, requestEntity, StatsDto[].class, parameters);
+        ResponseEntity<StatsDto[]> response = rest
+                .exchange(serverUrl + "/stats", HttpMethod.GET, new HttpEntity<>(""), StatsDto[].class, parameters);
         StatsDto[] result = response.getBody();
 
         return result != null ? Arrays.asList(result) : List.of();

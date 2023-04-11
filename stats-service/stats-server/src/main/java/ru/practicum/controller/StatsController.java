@@ -18,13 +18,13 @@ public class StatsController {
     private final StatsService statsService;
 
     @PostMapping("/hit")
-    ResponseEntity<Void> postHit(@Valid @RequestBody HitDto hitDto) {
+    public ResponseEntity<Void> postHit(@Valid @RequestBody HitDto hitDto) {
         statsService.postHit(hitDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/stats")
-    ResponseEntity<List<StatsDto>> getStats(@RequestParam String start, @RequestParam String end,
+    public ResponseEntity<List<StatsDto>> getStats(@RequestParam String start, @RequestParam String end,
                                             @RequestParam(required = false) List<String> uris,
                                             @RequestParam(defaultValue = "false") Boolean unique) {
         List<StatsDto> statsDtos = statsService.getStats(GetStatsRequest.of(start, end, uris, unique));
