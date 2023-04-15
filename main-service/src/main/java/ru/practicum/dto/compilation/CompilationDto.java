@@ -2,6 +2,7 @@ package ru.practicum.dto.compilation;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.dto.event.EventShortDto;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @Builder
 public class CompilationDto {
 
-    private List<Long> events;
+    private List<EventShortDto> events;
 
     private Boolean pinned;
 
