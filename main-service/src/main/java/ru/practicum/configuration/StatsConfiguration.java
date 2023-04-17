@@ -1,4 +1,4 @@
-package ru.practicum.util;
+package ru.practicum.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
