@@ -38,13 +38,13 @@ public class EventsPublicController {
         List<EventShortDto> eventShortDtos = eventService
                         .getEvents(PublicGetEventsRequest.of(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size),
                                 request.getRequestURI());
-        client.post(request);
+//        client.post(request);
         return new ResponseEntity<>(eventShortDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, HttpServletRequest request) {
-        client.post(request);
+//        client.post(request);
         EventFullDto eventFullDto = eventService.getEvent(id, request.getRequestURI());
         return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }

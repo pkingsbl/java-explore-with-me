@@ -57,17 +57,21 @@ public class EventServiceImpl implements EventService {
                 .getRangeStart() == null ? null : LocalDateTime.parse(adminGetEventsRequest.getRangeStart(), DTF);
         LocalDateTime end = adminGetEventsRequest
                 .getRangeEnd() == null ? null : LocalDateTime.parse(adminGetEventsRequest.getRangeEnd(), DTF);
-        List<StateEventFullEnum> states = adminGetEventsRequest
-                .getStates() == null ? null : adminGetEventsRequest.getStates()
-                .stream()
-                .map(StateEventFullEnum::valueOf)
-                .collect(Collectors.toList());
+        List<StateEventFullEnum> states = adminGetEventsRequest.getStates() == null ? null :
+                adminGetEventsRequest.getStates().stream()
+                        .map(StateEventFullEnum::valueOf)
+                        .collect(Collectors.toList());
         List<Event> events = eventRepository.admSearchEvents(adminGetEventsRequest.getUsers(), states,
-                adminGetEventsRequest.getCategories(), start, end, pageable);
+                adminGetEventsRequest.getCategories(), pageable);
 
         return events.stream()
+                .filter(event -> start != null ?
+                        event.getEventDate().isAfter(start) :
+                        event.getEventDate().isAfter(LocalDateTime.now())
+                                && end != null ? event.getEventDate().isBefore(end)
+                                : event.getEventDate().isBefore(LocalDateTime.MAX))
                 .map(event -> toEventFullDto(event, findConfirmedRequests(event)))
-                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
+//                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
@@ -96,7 +100,7 @@ public class EventServiceImpl implements EventService {
         event.setState(updateEvent.getStateAction() == StateActionEnum.PUBLISH_EVENT ? PUBLISHED : CANCELED);
 
         EventFullDto eventFullDto = toEventFullDto(eventRepository.saveAndFlush(event), findConfirmedRequests(event));
-        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
+//        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
         return eventFullDto;
     }
 
@@ -166,17 +170,22 @@ public class EventServiceImpl implements EventService {
         LocalDateTime end = publicGetEventsRequest
                 .getRangeEnd() == null ? null : LocalDateTime.parse(publicGetEventsRequest.getRangeEnd(), DTF);
 
-        Pageable pageable = toPageable(publicGetEventsRequest.getFrom(), publicGetEventsRequest.getSize(), publicGetEventsRequest.getSort());
+        Pageable pageable =
+                toPageable(publicGetEventsRequest.getFrom(), publicGetEventsRequest.getSize(), publicGetEventsRequest.getSort());
         List<Event> events = eventRepository.pbcSearchEvents(publicGetEventsRequest.getText(),
-                publicGetEventsRequest.getCategories(), publicGetEventsRequest.getPaid(), start, end, PUBLISHED, pageable);
+                publicGetEventsRequest.getCategories(), publicGetEventsRequest.getPaid(), PUBLISHED, pageable);
 
         if (publicGetEventsRequest.getOnlyAvailable() != null && publicGetEventsRequest.getOnlyAvailable()) {
             events = events.stream()
                     .filter(event -> findConfirmedRequests(event) < event.getParticipantLimit()).collect(Collectors.toList());
         }
         return events.stream()
+                .filter(event -> start != null ? event.getEventDate().isAfter(start) :
+                        event.getEventDate().isAfter(LocalDateTime.now())
+                                && end != null ? event.getEventDate().isBefore(end)
+                                : event.getEventDate().isBefore(LocalDateTime.MAX))
                 .map(event -> toEventShortDto(event, findConfirmedRequests(event)))
-                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
+//                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
@@ -189,7 +198,7 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException("Event with id=" + id + " was not found");
         }
         EventFullDto eventFullDto = toEventFullDto(event, findConfirmedRequests(event));
-        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
+//        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
         return eventFullDto;
     }
 

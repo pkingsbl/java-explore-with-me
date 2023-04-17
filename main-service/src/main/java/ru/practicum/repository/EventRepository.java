@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.dto.event.StateEventFullEnum;
 import ru.practicum.entity.Event;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -17,16 +16,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM events AS e " +
             "WHERE (:users IS NULL OR e.initiator.id = :users) " +
             "AND (:states IS NULL OR e.state = :states) " +
-            "AND (:categories IS NULL OR e.category.id = :categories) " +
-            "AND (:start IS NULL OR e.eventDate  > :start) " +
-            "AND (:end IS NULL OR e.eventDate <= :end)"
+            "AND (:categories IS NULL OR e.category.id = :categories)"
     )
     List<Event> admSearchEvents(
             @Param("users") List<Long> users,
             @Param("states") List<StateEventFullEnum> states,
             @Param("categories") List<Long> categories,
-            @Param("start") LocalDateTime rangeStart,
-            @Param("end") LocalDateTime rangeEnd,
             Pageable pageable
     );
 
@@ -35,16 +30,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "OR (:text IS NULL OR lower(e.description) like lower(concat('%', :text, '%'))) " +
             "AND (:categories IS NULL OR e.category.id = :categories) " +
             "AND (:paid IS NULL OR e.paid  = :paid) " +
-            "AND (:start IS NULL OR e.eventDate  > :start) " +
-            "AND (:end IS NULL OR e.eventDate <= :end)" +
             "AND (:states IS NULL OR e.state = :states)"
     )
     List<Event> pbcSearchEvents(
             @Param("text") String text,
             @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
             @Param("states") StateEventFullEnum states,
             Pageable pageable
     );
