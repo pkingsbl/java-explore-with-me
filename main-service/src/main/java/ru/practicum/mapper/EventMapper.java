@@ -50,20 +50,7 @@ public class EventMapper {
                 .build();
     }
 
-    public static Event toEvent(UpdateEventAdminRequest updateEvent, Category category) {
-        return Event.builder()
-                .annotation(updateEvent.getAnnotation())
-                .category(category)
-                .description(updateEvent.getDescription())
-                .eventDate(LocalDateTime.parse(updateEvent.getEventDate(), DATE_TIME_FORMATTER))
-                .location(updateEvent.getLocation())
-                .paid(updateEvent.getPaid())
-                .participantLimit(updateEvent.getParticipantLimit())
-                .requestModeration(updateEvent.getRequestModeration())
-                .build();
-    }
-
-    public static Event toEvent(NewEventDto newEventDto, Category category, User initiator) {
+    public static Event toNewEvent(NewEventDto newEventDto, Category category, User initiator) {
         return Event.builder()
                 .annotation(newEventDto.getAnnotation())
                 .category(category)
@@ -77,7 +64,9 @@ public class EventMapper {
                 .requestModeration(newEventDto.getRequestModeration())
                 .state(StateEventFullEnum.PENDING)
                 .title(newEventDto.getTitle())
+                .views(0L)
                 .build();
     }
 
 }
+

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS events (
     paid BOOLEAN NOT NULL,
     participant_limit INTEGER NOT NULL,
     published_on TIMESTAMP,
-    request_moderation BOOLEAN NOT NULL,
+    request_moderation BOOLEAN,
     state VARCHAR(10) NOT NULL,
     title VARCHAR(120) NOT NULL,
     views BIGINT NOT NULL,

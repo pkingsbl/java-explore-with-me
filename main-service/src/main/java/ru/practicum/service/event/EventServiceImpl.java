@@ -119,7 +119,7 @@ public class EventServiceImpl implements EventService {
         User user = findUser(userId);
         checkEventDate(newEventDto.getEventDate());
         Category category = findCategory(newEventDto.getCategory());
-        Event event = toEvent(newEventDto, category, user);
+        Event event = toNewEvent(newEventDto, category, user);
 
         return toEventFullDto(eventRepository.saveAndFlush(event), findConfirmedRequests(event));
     }
