@@ -55,6 +55,7 @@ public class StatsClientServiceImpl implements StatsClientService {
 
         return statsDtos.get(0) != null ? statsDtos.get(0).getHits() : 0L;
     }
+
     @Override
     public List<StatsDto> getStats(String start, String end, List<String> uris, Boolean unique) {
         log.info("GET Client Statistic for from: {} to: {} unique: {} for {}",

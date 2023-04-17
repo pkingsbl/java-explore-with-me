@@ -2,6 +2,7 @@ package ru.practicum.service.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,7 +21,7 @@ import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.ParticipationRepository;
 import ru.practicum.repository.UserRepository;
-import ru.practicum.service.StatsClientServiceImpl;
+import ru.practicum.service.StatsClientService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,15 +35,15 @@ import static ru.practicum.mapper.EventMapper.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final ParticipationRepository participationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final StatsClientServiceImpl client;
+    private final StatsClientService statsClientService;
 
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -66,7 +67,7 @@ public class EventServiceImpl implements EventService {
 
         return events.stream()
                 .map(event -> toEventFullDto(event, findConfirmedRequests(event)))
-                .peek(eventFullDto -> eventFullDto.setViews(client.getStats(requestURI, false)))
+                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
@@ -95,7 +96,7 @@ public class EventServiceImpl implements EventService {
         event.setState(updateEvent.getStateAction() == StateActionEnum.PUBLISH_EVENT ? PUBLISHED : CANCELED);
 
         EventFullDto eventFullDto = toEventFullDto(eventRepository.saveAndFlush(event), findConfirmedRequests(event));
-        eventFullDto.setViews(client.getStats(requestURI, false));
+        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
         return eventFullDto;
     }
 
@@ -175,7 +176,7 @@ public class EventServiceImpl implements EventService {
         }
         return events.stream()
                 .map(event -> toEventShortDto(event, findConfirmedRequests(event)))
-                .peek(eventFullDto -> eventFullDto.setViews(client.getStats(requestURI, false)))
+                .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
@@ -188,7 +189,7 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException("Event with id=" + id + " was not found");
         }
         EventFullDto eventFullDto = toEventFullDto(event, findConfirmedRequests(event));
-        eventFullDto.setViews(client.getStats(requestURI, false));
+        eventFullDto.setViews(statsClientService.getStats(requestURI, false));
         return eventFullDto;
     }
 
