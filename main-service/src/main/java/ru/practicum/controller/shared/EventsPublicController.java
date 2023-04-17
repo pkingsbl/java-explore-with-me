@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
+import ru.practicum.dto.event.PublicGetEventsRequest;
+import ru.practicum.service.event.EventService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -15,8 +18,10 @@ import java.util.List;
 @RequestMapping(path = "/events")
 public class EventsPublicController {
 
+    private final EventService eventService;
+
     @GetMapping
-    public ResponseEntity<EventShortDto> getEvents(
+    public ResponseEntity<List<EventShortDto>> getEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
@@ -25,13 +30,19 @@ public class EventsPublicController {
             @RequestParam(required = false) Boolean onlyAvailable,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer from,
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 10) Integer size
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 10) Integer size,
+            HttpServletRequest request
     ) {
-        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        List<EventShortDto> eventShortDtos = eventService.getEvents(PublicGetEventsRequest
+                        .of(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size),
+                request.getRemoteAddr(), request.getRequestURI());
+        return new ResponseEntity<>(eventShortDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id) {
-        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, HttpServletRequest request) {
+        EventFullDto eventFullDto = eventService.getEvent(id, request.getRemoteAddr(), request.getRequestURI());
+        return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }
+
 }

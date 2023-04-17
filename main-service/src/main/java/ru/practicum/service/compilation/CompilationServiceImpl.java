@@ -9,18 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
 import ru.practicum.dto.compilation.UpdateCompilationRequest;
+import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.entity.Compilation;
 import ru.practicum.entity.Event;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.mapper.CompilationMapper;
-import ru.practicum.repository.CompilationsRepository;
+import ru.practicum.repository.CompilationRepository;
 import ru.practicum.repository.EventRepository;
+import ru.practicum.repository.ParticipationRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.dto.request.StatusEnum.CONFIRMED;
 import static ru.practicum.mapper.CompilationMapper.toCompilation;
 import static ru.practicum.mapper.CompilationMapper.toCompilationDto;
+import static ru.practicum.mapper.EventMapper.toEventShortDto;
 
 @Slf4j
 @Service
@@ -28,7 +31,8 @@ import static ru.practicum.mapper.CompilationMapper.toCompilationDto;
 @Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
 
-    private final CompilationsRepository compilationsRepository;
+    private final CompilationRepository compilationRepository;
+    private final ParticipationRepository participationRepository;
     private final EventRepository eventRepository;
 
     @Override
@@ -38,8 +42,8 @@ public class CompilationServiceImpl implements CompilationService {
 
         List<Event> events = findEvents(newCompilationDto.getEvents());
         Compilation compilation = toCompilation(newCompilationDto, events);
-        Compilation saveAndFlush = compilationsRepository.saveAndFlush(compilation);
-        return toCompilationDto(saveAndFlush);
+        Compilation saveAndFlush = compilationRepository.saveAndFlush(compilation);
+        return toCompilationDto(saveAndFlush, getEventShortDto(saveAndFlush));
     }
 
     @Override
@@ -48,7 +52,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Delete compilation id: {}", compId);
 
         Compilation compilation = findCompilation(compId);
-        compilationsRepository.delete(compilation);
+        compilationRepository.delete(compilation);
     }
 
     @Override
@@ -56,11 +60,14 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
         log.info("Update compilation id: {}, title: {}", compId, updateCompilationRequest.getTitle());
 
-        List<Event> events = findEvents(updateCompilationRequest.getEvents());
-        findCompilation(compId);
-        Compilation compilation = toCompilation(updateCompilationRequest, events, compId);
-        Compilation saveAndFlush = compilationsRepository.saveAndFlush(compilation);
-        return toCompilationDto(saveAndFlush);
+        Compilation compilation = findCompilation(compId);
+        compilation.setEvents(updateCompilationRequest.getEvents() == null ? compilation.getEvents() : findEvents(updateCompilationRequest.getEvents()));
+        compilation.setPinned(updateCompilationRequest.getPinned() == null ? compilation.getPinned() : updateCompilationRequest.getPinned());
+        compilation.setTitle(updateCompilationRequest.getTitle() == null ? compilation.getTitle() : updateCompilationRequest.getTitle());
+
+
+        compilation = compilationRepository.saveAndFlush(compilation);
+        return toCompilationDto(compilation, getEventShortDto(compilation));
     }
 
     @Override
@@ -69,14 +76,12 @@ public class CompilationServiceImpl implements CompilationService {
         Pageable pageable = PageRequest.of(from / size, size);
 
         if (pinned != null) {
-            return compilationsRepository.findAllByPinned(pinned, pageable)
-                    .stream()
-                    .map(CompilationMapper::toCompilationDto)
+            return compilationRepository.findAllByPinned(pinned, pageable).stream()
+                    .map(compilation -> toCompilationDto(compilation, getEventShortDto(compilation)))
                     .collect(Collectors.toList());
         }
-        return compilationsRepository.findAll(pageable)
-                .stream()
-                .map(CompilationMapper::toCompilationDto)
+        return compilationRepository.findAll(pageable).stream()
+                .map(compilation -> toCompilationDto(compilation, getEventShortDto(compilation)))
                 .collect(Collectors.toList());
     }
 
@@ -85,15 +90,25 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Get compilation id: {}", compId);
 
         Compilation compilation = findCompilation(compId);
-        return toCompilationDto(compilation);
+        return toCompilationDto(compilation, getEventShortDto(compilation));
     }
 
     private Compilation findCompilation(Long compId) {
-        return compilationsRepository.findById(compId)
+        return compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id=" + compId + " was not found"));
     }
 
     private List<Event> findEvents(List<Long> eventIds) {
         return (eventIds == null || eventIds.isEmpty()) ? null : eventRepository.findAllById(eventIds);
+    }
+
+    private Long findConfirmedRequests(Event event) {
+        return participationRepository.countByEventIdAndStatus(event.getId(), CONFIRMED);
+    }
+
+    private List<EventShortDto> getEventShortDto(Compilation compilation) {
+        return compilation.getEvents() == null ? List.of() : compilation.getEvents().stream()
+                .map(event -> toEventShortDto(event, findConfirmedRequests(event)))
+                .collect(Collectors.toList());
     }
 }

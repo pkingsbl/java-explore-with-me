@@ -23,6 +23,7 @@ public class ErrorHandler {
     private final String reasonConflict = "Integrity constraint has been violated.";
     private final String reasonBadRq = "Incorrectly made request.";
     private final String reasonNotFound = "The required object was not found.";
+    private final String reasonForbidden = "For the requested operation the conditions are not met.";
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiError> handleValidation(final ConstraintViolationException e) {
@@ -40,12 +41,28 @@ public class ErrorHandler {
         return new ResponseEntity<>(errorRs, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleValidation(final ConflictException e) {
+        log.warn("Недопустиммое занчение: " + e.getMessage());
+
+        ApiError errorRs = errorBuilder.build(HttpStatus.CONFLICT, reasonConflict, e);
+        return new ResponseEntity<>(errorRs, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiError> handleValidation(final NotFoundException e) {
         log.warn("Не удалось найти запись в базе данных: " + e.getMessage());
 
         ApiError errorRs = errorBuilder.build(HttpStatus.NOT_FOUND, reasonNotFound, e);
         return new ResponseEntity<>(errorRs, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleValidation(final ForbiddenException e) {
+        log.warn("Недопустиммое занчение: " + e.getMessage());
+
+        ApiError errorRs = errorBuilder.build(HttpStatus.FORBIDDEN, reasonForbidden, e);
+        return new ResponseEntity<>(errorRs, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({

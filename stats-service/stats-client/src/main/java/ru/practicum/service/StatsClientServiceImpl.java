@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
+
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,26 @@ public class StatsClientServiceImpl implements StatsClientService {
 
     @Value("${stats-server.url}")
     private String serverUrl;
+
+    @Value("${stat-client.name}")
+    private String name;
     private final RestTemplate rest;
+
+    @Override
+    public void saveHit(String uri, long eventId, String ip) {
+        HitDto hitDto = HitDto.builder()
+                .app(serverUrl + name)
+                .uri(uri)
+                .ip(ip)
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+        try {
+            postHit(hitDto);
+        } catch (RuntimeException ex) {
+            log.info(ex.getMessage());
+        }
+    }
+
 
     @Override
     public ResponseEntity<Object> postHit(HitDto hitDto) {

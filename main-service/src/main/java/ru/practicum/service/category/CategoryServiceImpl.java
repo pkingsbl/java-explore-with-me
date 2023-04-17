@@ -43,14 +43,17 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
         log.info("Update category id: {}, name: {}", categoryDto.getId(), categoryDto.getName());
 
-        findCategory(catId);
+        Category category = findCategory(catId);
         if (categoryDto.getId() != null && !categoryDto.getId().equals(catId)) {
             throw new ValidationException("Параметр id категории не соответствует телу запроса");
         }
-        Category category = toCategory(categoryDto);
-        Category saveAndFlush = categoryRepository.saveAndFlush(category);
+        if (categoryDto.getName() == null) {
+            throw new ValidationException("Параметр name не может быть пустым");
+        }
+        category.setName(categoryDto.getName());
+        category = categoryRepository.saveAndFlush(category);
 
-        return toCategoryDto(saveAndFlush);
+        return toCategoryDto(category);
     }
 
     @Override
@@ -58,7 +61,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long catId) {
         log.info("Delete category id: {}", catId);
         Category category = findCategory(catId);
-        // TODO добавить проверку на связь с событиями
 
         categoryRepository.delete(category);
     }

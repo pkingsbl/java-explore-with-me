@@ -4,10 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.dto.user.UserShortDto;
 import ru.practicum.dto.category.CategoryDto;
+import ru.practicum.entity.Location;
 
 @Data
 @Builder
 public class EventFullDto {
+
+    private Long id;
 
     private String annotation;
 
@@ -20,8 +23,6 @@ public class EventFullDto {
     private String description;
 
     private String eventDate;
-
-    private Long id;
 
     private UserShortDto initiator;
 

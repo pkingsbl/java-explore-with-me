@@ -1,16 +1,18 @@
 package ru.practicum.dto.event;
 
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
+import ru.practicum.entity.Location;
 
 import javax.validation.constraints.NotBlank;
 
+@Getter
 public class NewEventDto {
 
     @NotBlank
     @Length(min = 20, max = 2000)
     private String annotation;
 
-    @NotBlank
     private Long category;
 
     @NotBlank
@@ -20,7 +22,6 @@ public class NewEventDto {
     @NotBlank
     private String eventDate;
 
-    @NotBlank
     private Location location;
 
     private Boolean paid = false;

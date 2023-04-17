@@ -1,7 +1,10 @@
 package ru.practicum.dto.event;
 
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
+import ru.practicum.entity.Location;
 
+@Getter
 public class UpdateEventUserRequest {
 
     @Length(min = 20, max = 2000)
@@ -22,7 +25,7 @@ public class UpdateEventUserRequest {
 
     private Boolean requestModeration;
 
-    private StateEnum state;
+    private StateEnum stateAction;
 
     @Length(min = 3, max = 120)
     private String title;

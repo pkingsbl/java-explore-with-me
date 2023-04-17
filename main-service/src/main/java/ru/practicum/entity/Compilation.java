@@ -1,9 +1,6 @@
 package ru.practicum.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -19,12 +16,15 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(nullable = false)
     private String title;
 
+    @Setter
     @Column(nullable = false)
     private Boolean pinned;
 
+    @Setter
     @ManyToMany
     @JoinTable(
             name = "compilation_events",

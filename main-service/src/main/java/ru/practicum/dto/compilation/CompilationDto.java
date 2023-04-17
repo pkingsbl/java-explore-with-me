@@ -10,6 +10,8 @@ import java.util.List;
 @Builder
 public class CompilationDto {
 
+    private Long id;
+
     private List<EventShortDto> events;
 
     private Boolean pinned;
