@@ -1,16 +1,16 @@
 package ru.practicum.service;
 
-import org.springframework.http.ResponseEntity;
-import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface StatsClientService {
 
-    void saveHit(String uri, long eventId, String ip);
+    void post(HttpServletRequest request);
 
-    ResponseEntity<Object> postHit(HitDto hitDto);
+    Long getStats(String uris, Boolean unique);
 
     List<StatsDto> getStats(String start, String end, List<String> uris, Boolean unique);
+
 }

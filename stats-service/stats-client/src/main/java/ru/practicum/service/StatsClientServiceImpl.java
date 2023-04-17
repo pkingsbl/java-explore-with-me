@@ -10,7 +10,9 @@ import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -22,33 +24,37 @@ public class StatsClientServiceImpl implements StatsClientService {
     @Value("${stats-server.url}")
     private String serverUrl;
 
-    @Value("${stat-client.name}")
+    @Value("${client-server.name}")
     private String name;
     private final RestTemplate rest;
 
     @Override
-    public void saveHit(String uri, long eventId, String ip) {
+    public void post(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String ip = request.getRemoteAddr();
+
+        log.info("POST Client Statistic for uri: {}, ip: {}", uri, ip);
+
         HitDto hitDto = HitDto.builder()
-                .app(serverUrl + name)
+                .app(name)
                 .uri(uri)
                 .ip(ip)
-                .timestamp(LocalDateTime.now().toString())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
-        try {
-            postHit(hitDto);
-        } catch (RuntimeException ex) {
-            log.info(ex.getMessage());
-        }
-    }
 
+        rest.exchange(serverUrl + "/hit", HttpMethod.POST, new HttpEntity<>(hitDto), Object.class);
+    }
 
     @Override
-    public ResponseEntity<Object> postHit(HitDto hitDto) {
-        log.info("POST Client Statistic hit for app: {}", hitDto.getApp());
+    public Long getStats(String uris, Boolean unique) {
+        log.info("GET Client Statistic unique: {} for {}", unique, uris != null ? uris : "all");
 
-        return rest.exchange(serverUrl + "/hit", HttpMethod.POST, new HttpEntity<>(hitDto), Object.class);
+        List<StatsDto> statsDtos = getStats("1923-01-01 00:00:00",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                List.of(uris), unique);
+
+        return statsDtos.get(0) != null ? statsDtos.get(0).getHits() : 0L;
     }
-
     @Override
     public List<StatsDto> getStats(String start, String end, List<String> uris, Boolean unique) {
         log.info("GET Client Statistic for from: {} to: {} unique: {} for {}",

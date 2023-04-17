@@ -42,13 +42,12 @@ public class EventServiceImpl implements EventService {
     private final ParticipationRepository participationRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-
     private final StatsClientServiceImpl client;
 
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public List<EventFullDto> getEvents(AdminGetEventsRequest adminGetEventsRequest) {
+    public List<EventFullDto> getEvents(AdminGetEventsRequest adminGetEventsRequest, String requestURI) {
         log.info("Admin. Get events");
 
         Pageable pageable = toPageable(adminGetEventsRequest.getFrom(), adminGetEventsRequest.getSize(), null);
@@ -67,12 +66,13 @@ public class EventServiceImpl implements EventService {
 
         return events.stream()
                 .map(event -> toEventFullDto(event, findConfirmedRequests(event)))
+                .peek(eventFullDto -> eventFullDto.setViews(client.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEvent) {
+    public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEvent,String requestURI) {
         log.info("Admin. Update event id: {}", eventId);
 
         Event event = findEvent(eventId);
@@ -94,7 +94,9 @@ public class EventServiceImpl implements EventService {
         }
         event.setState(updateEvent.getStateAction() == StateActionEnum.PUBLISH_EVENT ? PUBLISHED : CANCELED);
 
-        return toEventFullDto(eventRepository.saveAndFlush(event), findConfirmedRequests(event));
+        EventFullDto eventFullDto = toEventFullDto(eventRepository.saveAndFlush(event), findConfirmedRequests(event));
+        eventFullDto.setViews(client.getStats(requestURI, false));
+        return eventFullDto;
     }
 
     @Override
@@ -155,7 +157,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getEvents(PublicGetEventsRequest publicGetEventsRequest, String remoteAddr, String requestURI) {
+    public List<EventShortDto> getEvents(PublicGetEventsRequest publicGetEventsRequest, String requestURI) {
         log.info("Public. Get events");
 
         LocalDateTime start = publicGetEventsRequest
@@ -172,21 +174,22 @@ public class EventServiceImpl implements EventService {
                     .filter(event -> findConfirmedRequests(event) < event.getParticipantLimit()).collect(Collectors.toList());
         }
         return events.stream()
-                .peek(event -> client.saveHit(requestURI, event.getId(), remoteAddr))
                 .map(event -> toEventShortDto(event, findConfirmedRequests(event)))
+                .peek(eventFullDto -> eventFullDto.setViews(client.getStats(requestURI, false)))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public EventFullDto getEvent(Long id, String remoteAddr, String requestURI) {
+    public EventFullDto getEvent(Long id, String requestURI) {
         log.info("Public. Get event id: {}", id);
 
         Event event = findEvent(id);
         if (!event.getState().equals(PUBLISHED)) {
             throw new NotFoundException("Event with id=" + id + " was not found");
         }
-        client.saveHit(requestURI, id, remoteAddr);
-        return toEventFullDto(event, findConfirmedRequests(event));
+        EventFullDto eventFullDto = toEventFullDto(event, findConfirmedRequests(event));
+        eventFullDto.setViews(client.getStats(requestURI, false));
+        return eventFullDto;
     }
 
     @Override
