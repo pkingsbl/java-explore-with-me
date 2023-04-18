@@ -62,7 +62,8 @@ public class ParticipationServiceImpl implements ParticipationService {
             throw new ConflictException("Event not published");
         }
         if (event.getParticipantLimit() <= participationRepository
-                .countByEventIdAndStatus(eventId, CONFIRMED)) {
+                .countByEventIdAndStatus(eventId, CONFIRMED) + participationRepository
+                .countByEventIdAndStatus(eventId, StatusEnum.PENDING)) {
             throw new ConflictException("The limit of requests for participation has been exhausted");
         }
         Participation participation = Participation
