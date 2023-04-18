@@ -71,12 +71,6 @@ public class StatsClientServiceImpl implements StatsClientService {
         if (unique != null) {
             parameters.put("unique", unique);
         }
-//
-//        ResponseEntity<StatsDto[]> response = rest
-//                .exchange(serverUrl + "/stats", HttpMethod.GET, new HttpEntity<>(""), StatsDto[].class, parameters);
-//        StatsDto[] result = response.getBody();
-
-//        return result != null ? Arrays.asList(result) : List.of();
         return Unirest.get(serverUrl + "/stats")
                 .queryString("start", start)
                 .queryString("end", end)

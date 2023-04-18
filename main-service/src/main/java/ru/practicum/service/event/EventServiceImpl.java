@@ -219,13 +219,15 @@ public class EventServiceImpl implements EventService {
         log.info("User id {}. Update status request to {}, event id: {}",
                 userId, eventRequestStatusUpdateRequest.getStatus(), eventId);
 
+        Event event = findEvent(eventId);
+        if (event.getParticipantLimit() <= participationRepository
+                .countByEventIdAndStatus(eventId, CONFIRMED)) {
+            throw new ConflictException("The limit of requests for participation has been exhausted");
+        }
+
         List<Participation> allById = participationRepository.findAllById(eventRequestStatusUpdateRequest.getRequestIds());
         allById.forEach(participation -> {
             checkState(participation, CONFIRMED);
-            if (participation.getEvent().getParticipantLimit() <= participationRepository
-                    .countByEventIdAndStatus(eventId, CONFIRMED)) {
-                throw new ConflictException("The limit of requests for participation has been exhausted");
-            }
             participation.setStatus(eventRequestStatusUpdateRequest.getStatus());
         });
         participationRepository.saveAllAndFlush(allById);
