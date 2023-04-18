@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.EventShortDto;
 import ru.practicum.dto.event.PublicGetEventsRequest;
-import ru.practicum.service.StatsClientServiceImpl;
+import ru.practicum.service.StatsClientService;
 import ru.practicum.service.event.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.util.List;
 public class EventsPublicController {
 
     private final EventService eventService;
-    private final StatsClientServiceImpl client;
+    private final StatsClientService statsClientService;
 
     @GetMapping
     public ResponseEntity<List<EventShortDto>> getEvents(
@@ -35,16 +35,16 @@ public class EventsPublicController {
             @RequestParam(required = false, defaultValue = "10") @Min(value = 10) Integer size,
             HttpServletRequest request
     ) {
+        statsClientService.post(request);
         List<EventShortDto> eventShortDtos = eventService
                         .getEvents(PublicGetEventsRequest.of(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size),
                                 request.getRequestURI());
-//        client.post(request);
         return new ResponseEntity<>(eventShortDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EventFullDto> getEvent(@PathVariable Long id, HttpServletRequest request) {
-//        client.post(request);
+        statsClientService.post(request);
         EventFullDto eventFullDto = eventService.getEvent(id, request.getRequestURI());
         return new ResponseEntity<>(eventFullDto, HttpStatus.OK);
     }

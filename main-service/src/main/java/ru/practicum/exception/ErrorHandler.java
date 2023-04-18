@@ -72,7 +72,8 @@ public class ErrorHandler {
     })
     public ResponseEntity<ApiError> handleValidation(final Exception e) {
         log.warn("Неправильно составленный запрос: " + e.getMessage());
-
+        log.warn(e.getLocalizedMessage());
+        e.printStackTrace();
         ApiError errorRs = errorBuilder.build(HttpStatus.BAD_REQUEST, reasonBadRq,  e);
         return new ResponseEntity<>(errorRs, HttpStatus.BAD_REQUEST);
     }

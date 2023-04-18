@@ -1,11 +1,12 @@
 package ru.practicum.service;
 
+import kong.unirest.GenericType;
+import kong.unirest.Unirest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
@@ -13,7 +14,6 @@ import ru.practicum.dto.StatsDto;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class StatsClientServiceImpl implements StatsClientService {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 List.of(uris), unique);
 
-        return statsDtos.get(0) != null ? statsDtos.get(0).getHits() : 0L;
+        return statsDtos.size() > 0 ? statsDtos.get(0).getHits() : 0L;
     }
 
     @Override
@@ -71,12 +71,19 @@ public class StatsClientServiceImpl implements StatsClientService {
         if (unique != null) {
             parameters.put("unique", unique);
         }
+//
+//        ResponseEntity<StatsDto[]> response = rest
+//                .exchange(serverUrl + "/stats", HttpMethod.GET, new HttpEntity<>(""), StatsDto[].class, parameters);
+//        StatsDto[] result = response.getBody();
 
-        ResponseEntity<StatsDto[]> response = rest
-                .exchange(serverUrl + "/stats", HttpMethod.GET, new HttpEntity<>(""), StatsDto[].class, parameters);
-        StatsDto[] result = response.getBody();
-
-        return result != null ? Arrays.asList(result) : List.of();
+//        return result != null ? Arrays.asList(result) : List.of();
+        return Unirest.get(serverUrl + "/stats")
+                .queryString("start", start)
+                .queryString("end", end)
+                .queryString("uris", uris)
+                .queryString("unique", unique)
+                .asObject(new GenericType<List<StatsDto>>() {
+                })
+                .getBody();
     }
-
 }

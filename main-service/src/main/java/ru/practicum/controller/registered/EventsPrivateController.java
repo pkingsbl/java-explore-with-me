@@ -66,7 +66,7 @@ public class EventsPrivateController {
     public ResponseEntity<EventRequestStatusUpdateResult> changeRequestStatus(
             @PathVariable Long userId,
             @PathVariable Long eventId,
-            @Valid @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest
+            @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest
     ) {
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult =
                 eventService.changeRequestStatus(userId, eventId, eventRequestStatusUpdateRequest);
