@@ -17,7 +17,6 @@ import ru.practicum.repository.ParticipationRepository;
 import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +33,6 @@ public class ParticipationServiceImpl implements ParticipationService {
     private final ParticipationRepository participationRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-
-    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 
     @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
@@ -69,10 +65,6 @@ public class ParticipationServiceImpl implements ParticipationService {
                 .countByEventIdAndStatus(eventId, CONFIRMED)) {
             throw new ConflictException("The limit of requests for participation has been exhausted");
         }
-        if (event.getParticipantLimit() <= participationRepository
-                .countByEventIdAndStatus(eventId, StatusEnum.PENDING)) {
-            throw new ConflictException("The limit of requests for participation has been exhausted");
-        }
         Participation participation = Participation
                 .builder()
                 .created(LocalDateTime.now())
@@ -81,11 +73,7 @@ public class ParticipationServiceImpl implements ParticipationService {
                 .status(StatusEnum.PENDING)
                 .build();
 
-        ParticipationRequestDto participationRequestDto = toParticipationRequestDto(participationRepository.saveAndFlush(participation));
-
-
-        return
-                participationRequestDto;
+        return toParticipationRequestDto(participationRepository.saveAndFlush(participation));
     }
 
     @Override

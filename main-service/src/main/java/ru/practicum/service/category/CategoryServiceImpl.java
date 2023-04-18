@@ -8,10 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.category.NewCategoryDto;
 import ru.practicum.entity.Category;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.repository.CategoryRepository;
+import ru.practicum.repository.EventRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,8 @@ import static ru.practicum.mapper.CategoryMapper.toCategoryDto;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -62,6 +66,9 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Delete category id: {}", catId);
         Category category = findCategory(catId);
 
+        if (!eventRepository.findAllByCategoryId(catId).isEmpty()) {
+            throw new ConflictException("Deleting a category with linked events!");
+        }
         categoryRepository.delete(category);
     }
 
