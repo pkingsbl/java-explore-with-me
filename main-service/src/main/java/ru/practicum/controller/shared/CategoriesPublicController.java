@@ -18,7 +18,7 @@ import java.util.List;
 public class CategoriesPublicController {
 
     private final CategoryService categoryService;
-    private final StatsClientServiceImpl client;
+    private final StatsClientServiceImpl statsClientService;
 
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getCategories(
@@ -27,14 +27,14 @@ public class CategoriesPublicController {
             HttpServletRequest request
     ) {
         List<CategoryDto> categoryDtos = categoryService.getCategories(from, size);
-        client.post(request);
+        statsClientService.post(request);
         return new ResponseEntity<>(categoryDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{catId}")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable Long catId, HttpServletRequest request) {
         CategoryDto categoryDto = categoryService.getCategory(catId);
-        client.post(request);
+        statsClientService.post(request);
         return new ResponseEntity<>(categoryDto, HttpStatus.OK);
     }
 

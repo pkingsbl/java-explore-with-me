@@ -13,8 +13,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_SERVER_URL=http://ewm-service:9090
-      - stat-client.name=ewm-main-service
-      - stats-server.uri=http://stats-server:9090
+      - STATS_CLIENT_NAME=ewm-main-service
+      - STATS_SERVER_URI=http://stats-server:9090
 
   stats-db:
     image: postgres:14-alpine
@@ -41,7 +41,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - STATS_SERVER_URL=http://stats-server:9090
       - SERVICE_NAME="ewm-main-service"
-      - stats-server.uri=http://stats-server:9090
+      - STATS_SERVER_URI=http://stats-server:9090
 
   ewm-db:
     image: postgres:14-alpine

@@ -79,11 +79,11 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
-        log.info("User id: {}. Cancel request id: {}", userId, requestId);
-        findUser(userId);
-        Participation participation = participationRepository.findByIdAndRequesterId(requestId, userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " and requestId " + requestId + " was not found"));
+    public ParticipationRequestDto cancelRequest(Long requesterId, Long requestId) {
+        log.info("User id: {}. Cancel request id: {}", requesterId, requestId);
+        findUser(requesterId);
+        Participation participation = participationRepository.findByIdAndRequesterId(requestId, requesterId)
+                .orElseThrow(() -> new NotFoundException("User with id=" + requesterId + " and requestId " + requestId + " was not found"));
         participation.setStatus(StatusEnum.CANCELED);
 
         return toParticipationRequestDto(participationRepository.save(participation));

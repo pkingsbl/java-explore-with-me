@@ -61,15 +61,10 @@ public class EventServiceImpl implements EventService {
                 adminGetEventsRequest.getStates().stream()
                         .map(StateEventFullEnum::valueOf)
                         .collect(Collectors.toList());
-        List<Event> events = eventRepository.admSearchEvents(adminGetEventsRequest.getUsers(), states,
+        List<Event> events = eventRepository.searchByUsersStatesCategories(adminGetEventsRequest.getUsers(), states,
                 adminGetEventsRequest.getCategories(), pageable);
 
-        return events.stream()
-                .filter(event -> start != null ?
-                        event.getEventDate().isAfter(start) :
-                        event.getEventDate().isAfter(LocalDateTime.now())
-                                && end != null ? event.getEventDate().isBefore(end)
-                                : event.getEventDate().isBefore(LocalDateTime.MAX))
+        return filterByDate(start, end, events).stream()
                 .map(event -> toEventFullDto(event, findConfirmedRequests(event)))
                 .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
@@ -172,18 +167,14 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable =
                 toPageable(publicGetEventsRequest.getFrom(), publicGetEventsRequest.getSize(), publicGetEventsRequest.getSort());
-        List<Event> events = eventRepository.pbcSearchEvents(publicGetEventsRequest.getText(),
+        List<Event> events = eventRepository.searchByTextCategoriesPaidStates(publicGetEventsRequest.getText(),
                 publicGetEventsRequest.getCategories(), publicGetEventsRequest.getPaid(), PUBLISHED, pageable);
 
         if (publicGetEventsRequest.getOnlyAvailable() != null && publicGetEventsRequest.getOnlyAvailable()) {
             events = events.stream()
                     .filter(event -> findConfirmedRequests(event) < event.getParticipantLimit()).collect(Collectors.toList());
         }
-        return events.stream()
-                .filter(event -> start != null ? event.getEventDate().isAfter(start) :
-                        event.getEventDate().isAfter(LocalDateTime.now())
-                                && end != null ? event.getEventDate().isBefore(end)
-                                : event.getEventDate().isBefore(LocalDateTime.MAX))
+        return filterByDate(start, end, events).stream()
                 .map(event -> toEventShortDto(event, findConfirmedRequests(event)))
                 .peek(eventFullDto -> eventFullDto.setViews(statsClientService.getStats(requestURI, false)))
                 .collect(Collectors.toList());
@@ -245,6 +236,14 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
+    private List<Event> filterByDate(LocalDateTime start, LocalDateTime end, List<Event> events) {
+        return events.stream()
+                .filter(event -> start != null ? event.getEventDate().isAfter(start) :
+                        event.getEventDate().isAfter(LocalDateTime.now())
+                                && end != null ? event.getEventDate().isBefore(end)
+                                : event.getEventDate().isBefore(LocalDateTime.MAX)).collect(Collectors.toList());
+    }
+
     private Pageable toPageable(Integer from, Integer size, String sort) {
         Sort sorted = Sort.unsorted();
         if (sort != null) {
@@ -262,14 +261,14 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
     }
 
-    private static void checkEventDate(String date) {
+    private void checkEventDate(String date) {
         if (date != null && LocalDateTime.parse(date, DTF).isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. " +
                     "Value: " + date);
         }
     }
 
-    private static void checkState(Event event, StateEventFullEnum state) {
+    private void checkState(Event event, StateEventFullEnum state) {
         if (event.getState().equals(state)) {
             throw new ConflictException("Cannot publish the event because it's not in the right state: " + state.name());
         }

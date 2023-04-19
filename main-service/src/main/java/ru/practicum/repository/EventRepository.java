@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:states IS NULL OR e.state = :states) " +
             "AND (:categories IS NULL OR e.category.id = :categories)"
     )
-    List<Event> admSearchEvents(
+    List<Event> searchByUsersStatesCategories(
             @Param("users") List<Long> users,
             @Param("states") List<StateEventFullEnum> states,
             @Param("categories") List<Long> categories,
@@ -34,7 +34,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (:paid IS NULL OR e.paid  = :paid) " +
             "AND (:states IS NULL OR e.state = :states)"
     )
-    List<Event> pbcSearchEvents(
+    List<Event> searchByTextCategoriesPaidStates(
             @Param("text") String text,
             @Param("categories") List<Long> categories,
             @Param("paid") Boolean paid,

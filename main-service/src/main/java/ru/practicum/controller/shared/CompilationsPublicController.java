@@ -18,7 +18,7 @@ import java.util.List;
 public class CompilationsPublicController {
 
     private final CompilationService compilationService;
-    private final StatsClientServiceImpl client;
+    private final StatsClientServiceImpl statsClientService;
 
     @GetMapping
     public ResponseEntity<List<CompilationDto>> getCompilations(
@@ -27,14 +27,14 @@ public class CompilationsPublicController {
             @RequestParam(required = false, defaultValue = "10") @Min(value = 10) Integer size,
             HttpServletRequest request
     ) {
-        client.post(request);
+        statsClientService.post(request);
         List<CompilationDto> compilationDtos = compilationService.getCompilations(pinned, from, size);
         return new ResponseEntity<>(compilationDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{compId}")
     public ResponseEntity<CompilationDto> getCompilation(@PathVariable Long compId, HttpServletRequest request) {
-        client.post(request);
+        statsClientService.post(request);
         CompilationDto compilationDto = compilationService.getCompilation(compId);
         return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }

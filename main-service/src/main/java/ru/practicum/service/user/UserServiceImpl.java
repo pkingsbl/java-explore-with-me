@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
-        log.info("Get users " + (ids == null ? null : "with ids: " + ids));
+        log.info("Get users ids: {}", ids);
         Pageable pageable = PageRequest.of(from / size, size);
         if (ids == null) {
             return userRepository.findAll(pageable).stream()
