@@ -21,16 +21,18 @@ public class CommentMapper {
                 .created(comment.getCreated().format(DATE_TIME_FORMATTER))
                 .event(comment.getEvent())
                 .author(comment.getAuthor())
+                .edited(comment.isEdited())
                 .build();
     }
 
 
-    public static Comment toComment(User author, Event event, NewCommentDto newCommentDto) {
+    public static Comment toComment(User author, Event event, NewCommentDto newCommentDto, boolean edited) {
         return Comment.builder()
                 .text(newCommentDto.getText())
                 .event(event)
                 .author(author)
                 .created(LocalDateTime.now())
+                .edited(edited)
                 .build();
     }
 
@@ -40,6 +42,7 @@ public class CommentMapper {
                 .text(comment.getText())
                 .created(comment.getCreated().format(DATE_TIME_FORMATTER))
                 .authorName(comment.getAuthor().getName())
+                .edited(comment.isEdited())
                 .build();
     }
 }

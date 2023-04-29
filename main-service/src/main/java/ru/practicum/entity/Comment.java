@@ -29,4 +29,7 @@ public class Comment {
     private User author;
 
     private LocalDateTime created;
+
+    @Setter
+    private boolean edited;
 }

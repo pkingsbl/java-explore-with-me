@@ -19,4 +19,6 @@ public class CommentFullDto {
 
     private User author;
 
+    private boolean edited;
+
 }

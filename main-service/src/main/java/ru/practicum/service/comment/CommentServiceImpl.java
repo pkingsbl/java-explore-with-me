@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
 
         User author = findUser(userId);
         Event event = findEvent(eventId);
-        Comment comment = toComment(author, event, newCommentDto);
+        Comment comment = toComment(author, event, newCommentDto, false);
         comment = commentRepository.saveAndFlush(comment);
 
         return toCommentDto(comment);
@@ -87,6 +87,7 @@ public class CommentServiceImpl implements CommentService {
         checkAuthor(userId, comment);
 
         comment.setText(newCommentDto.getText());
+        comment.setEdited(true);
         comment = commentRepository.saveAndFlush(comment);
 
         return toCommentDto(comment);

@@ -15,4 +15,6 @@ public class CommentDto {
 
     private String authorName;
 
+    private boolean edited;
+
 }
