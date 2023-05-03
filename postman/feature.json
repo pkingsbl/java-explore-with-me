@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "1cfb7de0-5894-4ddb-8173-d8a2dc8d7594",
-		"name": "feature",
+		"_postman_id": "e1102fac-ba17-449c-9cdb-2adfa9d33b22",
+		"name": "feature Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "23407404"
 	},
@@ -26,18 +26,11 @@
 									"        pm.collectionVariables.set(\"uid\", user.id)",
 									"        const category = await api.addCategory(rnd.getCategory());",
 									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 									"        pm.collectionVariables.set(\"cid\", newComment.id)",
-									"        comment = {};",
 									"    } catch(err) {",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-									"    }",
-									"",
-									"    pm.request.body.update({",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify(comment),",
-									"        options: { raw: { language: 'json' } }",
-									"    });",
+									"    }    ",
 									"};",
 									"",
 									"const interval = setInterval(() => {}, 1000);",
@@ -87,6 +80,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -132,16 +134,10 @@
 									"        const category = await api.addCategory(rnd.getCategory());",
 									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
 									"        pm.collectionVariables.set(\"eid\", event.id)",
-									"        comment = {};",
 									"    } catch(err) {",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 									"    }",
 									"",
-									"    pm.request.body.update({",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify(comment),",
-									"        options: { raw: { language: 'json' } }",
-									"    });",
 									"};",
 									"",
 									"const interval = setInterval(() => {}, 1000);",
@@ -190,6 +186,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " { }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:eventId",
 							"host": [
@@ -236,18 +241,12 @@
 									"",
 									"        const event = await api.addEvent(user_1.id, rnd.getEvent(category.id));",
 									"        await api.addComment(user_1.id, event.id, rnd.getComment(event.id));",
-									"        const comment_2 = await api.addComment(user_2.id, event.id, rnd.getComment(event.id));",
+									"        const comment_2 = await api.addComment(user_2.id, event.id, rnd.getComment());",
 									"",
 									"        pm.collectionVariables.set(\"response\", comment_2)",
 									"    } catch(err) {",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 									"    }",
-									"",
-									"    pm.request.body.update({",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify(comment),",
-									"        options: { raw: { language: 'json' } }",
-									"    });",
 									"};",
 									"",
 									"const interval = setInterval(() => {}, 1000);",
@@ -283,9 +282,21 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/comments",
 							"host": [
@@ -320,20 +331,14 @@
 									"        pm.collectionVariables.set(\"uid\", user.id)",
 									"        const category = await api.addCategory(rnd.getCategory());",
 									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 									"        pm.collectionVariables.set(\"cid\", newComment.id)",
 									"        const newUser = await api.addUser(rnd.getUser());",
 									"        pm.collectionVariables.set(\"uid\", newUser.id)",
-									"        comment = rnd.getComment(newComment.id);",
 									"    } catch(err) {",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 									"    }",
 									"",
-									"    pm.request.body.update({",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify(comment),",
-									"        options: { raw: { language: 'json' } }",
-									"    });",
 									"};",
 									"",
 									"const interval = setInterval(() => {}, 1000);",
@@ -382,6 +387,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\" : \"lol\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -426,20 +440,13 @@
 									"        pm.collectionVariables.set(\"uid\", user.id)",
 									"        const category = await api.addCategory(rnd.getCategory());",
 									"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+									"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 									"        pm.collectionVariables.set(\"cid\", newComment.id)",
 									"        const newUser = await api.addUser(rnd.getUser());",
 									"        pm.collectionVariables.set(\"uid\", newUser.id)",
-									"        comment = rnd.getComment(newComment.id);",
 									"    } catch(err) {",
 									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 									"    }",
-									"",
-									"    pm.request.body.update({",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify(comment),",
-									"        options: { raw: { language: 'json' } }",
-									"    });",
 									"};",
 									"",
 									"const interval = setInterval(() => {}, 1000);",
@@ -470,7 +477,6 @@
 									"    pm.response.to.be.json;",
 									"});",
 									"",
-									"const source = JSON.parse(pm.request.body.raw);",
 									"const target = pm.response.json();",
 									"",
 									"pm.test(\"Ошибка должна содержать поля: errors, message, reason, status, timestamp\", function () {",
@@ -535,16 +541,9 @@
 							"        const category = await api.addCategory(rnd.getCategory());",
 							"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
 							"        pm.collectionVariables.set(\"eid\", event.id)",
-							"        comment = rnd.getComment(event.id);",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -597,6 +596,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\" : \"kek\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseUrl}}/users/:userId/comments/:eventId",
 					"host": [
@@ -641,18 +649,11 @@
 							"        pm.collectionVariables.set(\"uid\", user.id)",
 							"        const category = await api.addCategory(rnd.getCategory());",
 							"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 							"        pm.collectionVariables.set(\"cid\", newComment.id)",
-							"        comment = rnd.getComment(newComment.id);",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -705,6 +706,15 @@
 			"request": {
 				"method": "PATCH",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\" : \"cheburek\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 					"host": [
@@ -753,18 +763,12 @@
 							"        const comment_1 = await api.addComment(user.id, event_1.id, rnd.getComment(event_1.id));",
 							"",
 							"        const event_2 = await api.addEvent(user.id, rnd.getEvent(category.id));",
-							"        const comment_2 = await api.addComment(user.id, event_1.id, rnd.getComment(event_2.id));",
+							"        const comment_2 = await api.addComment(user.id, event_1.id, rnd.getComment());",
 							"",
 							"        pm.collectionVariables.set(\"response\", comment_2)",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -861,19 +865,12 @@
 							"",
 							"        const event = await api.addEvent(user_1.id, rnd.getEvent(category.id));",
 							"        pm.collectionVariables.set(\"eid\", event.id)",
-							"        await api.addComment(user_1.id, event.id, rnd.getComment(event.id));",
-							"        const comment_2 = await api.addComment(user_2.id, event.id, rnd.getComment(event.id));",
-							"",
+							"        await api.addComment(user_1.id, event.id, rnd.getComment());",
+							"        const comment_2 = await api.addComment(user_2.id, event.id, rnd.getComment());",
 							"        pm.collectionVariables.set(\"response\", comment_2)",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -966,19 +963,13 @@
 							"        const category = await api.addCategory(rnd.getCategory());",
 							"",
 							"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());",
 							"",
 							"        pm.collectionVariables.set(\"response\", comment)",
 							"        pm.collectionVariables.set(\"cid\", comment.id)",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -1070,18 +1061,11 @@
 							"        pm.collectionVariables.set(\"uid\", user.id)",
 							"        const category = await api.addCategory(rnd.getCategory());",
 							"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 							"        pm.collectionVariables.set(\"cid\", newComment.id)",
-							"        comment = rnd.getComment(newComment.id);",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
@@ -1169,18 +1153,11 @@
 							"        const user = await api.addUser(rnd.getUser());",
 							"        const category = await api.addCategory(rnd.getCategory());",
 							"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));",
-							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment(event.id));",
+							"        const newComment = await api.addComment(user.id, event.id, rnd.getComment());",
 							"        pm.collectionVariables.set(\"cid\", newComment.id)",
-							"        comment = rnd.getComment(newComment.id);",
 							"    } catch(err) {",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 							"    }",
-							"",
-							"    pm.request.body.update({",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify(comment),",
-							"        options: { raw: { language: 'json' } }",
-							"    });",
 							"};",
 							"",
 							"const interval = setInterval(() => {}, 1000);",
