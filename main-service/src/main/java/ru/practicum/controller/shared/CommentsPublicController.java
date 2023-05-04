@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.comment.CommentFullDto;
+import ru.practicum.dto.comment.CommentWithEventUserDto;
 import ru.practicum.service.comment.CommentService;
 
 import java.util.List;
@@ -17,14 +17,14 @@ public class CommentsPublicController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<CommentFullDto>> getComments(@RequestParam Long eventId) {
-        List<CommentFullDto> commentFullDtos = commentService.getComments(eventId);
-        return new ResponseEntity<>(commentFullDtos, HttpStatus.OK);
+    public ResponseEntity<List<CommentWithEventUserDto>> getComments(@RequestParam Long eventId) {
+        List<CommentWithEventUserDto> commentWithEventUserDtos = commentService.getComments(eventId);
+        return new ResponseEntity<>(commentWithEventUserDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{commentId}")
-    public ResponseEntity<CommentFullDto> getComment(@PathVariable Long commentId) {
-        CommentFullDto commentFullDto = commentService.getComment(commentId);
-        return new ResponseEntity<>(commentFullDto, HttpStatus.OK);
+    public ResponseEntity<CommentWithEventUserDto> getComment(@PathVariable Long commentId) {
+        CommentWithEventUserDto commentWithEventUserDto = commentService.getComment(commentId);
+        return new ResponseEntity<>(commentWithEventUserDto, HttpStatus.OK);
     }
 }

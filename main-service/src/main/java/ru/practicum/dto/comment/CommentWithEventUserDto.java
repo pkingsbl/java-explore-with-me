@@ -7,7 +7,7 @@ import ru.practicum.entity.User;
 
 @Data
 @Builder
-public class CommentFullDto {
+public class CommentWithEventUserDto {
 
     private Long id;
 

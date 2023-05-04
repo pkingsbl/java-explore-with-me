@@ -1,7 +1,7 @@
 package ru.practicum.mapper;
 
 import ru.practicum.dto.comment.CommentDto;
-import ru.practicum.dto.comment.CommentFullDto;
+import ru.practicum.dto.comment.CommentWithEventUserDto;
 import ru.practicum.dto.comment.NewCommentDto;
 import ru.practicum.entity.Comment;
 import ru.practicum.entity.Event;
@@ -14,8 +14,8 @@ public class CommentMapper {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static CommentFullDto toCommentFullDto(Comment comment) {
-        return CommentFullDto.builder()
+    public static CommentWithEventUserDto toCommentFullDto(Comment comment) {
+        return CommentWithEventUserDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .created(comment.getCreated().format(DATE_TIME_FORMATTER))

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.comment.CommentDto;
-import ru.practicum.dto.comment.CommentFullDto;
+import ru.practicum.dto.comment.CommentWithEventUserDto;
 import ru.practicum.dto.comment.NewCommentDto;
 import ru.practicum.service.comment.CommentService;
 
@@ -20,9 +20,9 @@ public class CommentsPrivateController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<CommentFullDto>> getComment(@PathVariable Long userId) {
-        List<CommentFullDto> commentFullDtos = commentService.getUsersComments(userId);
-        return new ResponseEntity<>(commentFullDtos, HttpStatus.OK);
+    public ResponseEntity<List<CommentWithEventUserDto>> getComment(@PathVariable Long userId) {
+        List<CommentWithEventUserDto> commentWithEventUserDtos = commentService.getUsersComments(userId);
+        return new ResponseEntity<>(commentWithEventUserDtos, HttpStatus.OK);
     }
 
     @PostMapping("/{eventId}")

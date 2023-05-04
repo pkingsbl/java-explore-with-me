@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.comment.CommentDto;
-import ru.practicum.dto.comment.CommentFullDto;
+import ru.practicum.dto.comment.CommentWithEventUserDto;
 import ru.practicum.dto.comment.NewCommentDto;
 import ru.practicum.entity.Comment;
 import ru.practicum.entity.Event;
@@ -35,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentFullDto getComment(Long commentId) {
+    public CommentWithEventUserDto getComment(Long commentId) {
         log.info("Public. Get comment id: {}", commentId);
 
         Comment comment = findComment(commentId);
@@ -44,22 +44,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentFullDto> getComments(Long eventId) {
+    public List<CommentWithEventUserDto> getComments(Long eventId) {
         log.info("Public. Get comments for event id: {}", eventId);
 
-        List<Comment> comments = commentRepository.findAllByEventId(eventId);
-        return comments.stream()
+        return commentRepository.findAllByEventId(eventId).stream()
                 .map(CommentMapper::toCommentFullDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentFullDto> getUsersComments(Long userId) {
+    public List<CommentWithEventUserDto> getUsersComments(Long userId) {
         log.info("User id {}. Get comments", userId);
 
-        List<Comment> comments = commentRepository.findAllByAuthorId(userId);
-
-        return comments.stream()
+        return commentRepository.findAllByAuthorId(userId).stream()
                 .map(CommentMapper::toCommentFullDto)
                 .collect(Collectors.toList());
     }
